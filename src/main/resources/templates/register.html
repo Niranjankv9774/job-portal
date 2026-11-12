@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Register')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container" style="max-width: 460px;">
+    <h2 class="mb-3">Create an account</h2>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <form th:action="@{/register}" th:object="${registerDto}" method="post">
+        <div class="mb-3">
+            <label class="form-label" for="name">Full name</label>
+            <input class="form-control" id="name" th:field="*{name}">
+            <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" id="email" th:field="*{email}">
+            <div class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="password">Password (min 8 characters)</label>
+            <input class="form-control" type="password" id="password" th:field="*{password}">
+            <div class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="role">I am a</label>
+            <select class="form-select" id="role" th:field="*{role}">
+                <option value="SEEKER">Job seeker</option>
+                <option value="RECRUITER">Recruiter</option>
+            </select>
+        </div>
+        <button class="btn btn-primary w-100" type="submit">Register</button>
+    </form>
+</div>
+</body>
+</html>
