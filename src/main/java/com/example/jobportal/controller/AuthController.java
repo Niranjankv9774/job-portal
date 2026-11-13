@@ -19,21 +19,24 @@ public class AuthController {
 
     private final UserService userService;
 
-    // Show the empty form
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("registerDto", new RegisterDto());
-        return "register";                       // opens templates/register.html
+        return "register";
     }
 
-    // Handle the submitted form
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registerDto") RegisterDto dto,
-                           BindingResult result,           // must come right after the @Valid object
+                           BindingResult result,
                            Model model,
                            RedirectAttributes redirect) {
         if (result.hasErrors()) {
-            return "register";                   // show the form again with error messages
+            return "register";
         }
         try {
             userService.register(dto);
@@ -41,7 +44,7 @@ public class AuthController {
             model.addAttribute("error", e.getMessage());
             return "register";
         }
-        redirect.addFlashAttribute("success", "Registration successful! Login will be added tomorrow.");
-        return "redirect:/register";             // Day 4 changes this to /login
+        redirect.addFlashAttribute("success", "Registration successful. Please log in.");
+        return "redirect:/login";
     }
 }

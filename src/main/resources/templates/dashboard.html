@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <h2>Welcome!</h2>
+    <p>You are logged in as <strong sec:authentication="name">user</strong>.</p>
+    <p sec:authorize="hasRole('SEEKER')" class="text-success">Your role: Job seeker</p>
+    <p sec:authorize="hasRole('RECRUITER')" class="text-primary">Your role: Recruiter</p>
+    <p sec:authorize="hasRole('ADMIN')" class="text-danger">Your role: Admin</p>
+</div>
+</body>
+</html>
