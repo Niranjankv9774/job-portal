@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('My jobs')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">My jobs</h2>
+        <a class="btn btn-primary" th:href="@{/recruiter/jobs/new}">Post a job</a>
+    </div>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div th:if="${#lists.isEmpty(jobs)}" class="alert alert-secondary">
+        You have not posted any jobs yet. Make sure your
+        <a th:href="@{/recruiter/company}">company profile</a> is saved first.
+    </div>
+
+    <table class="table align-middle" th:unless="${#lists.isEmpty(jobs)}">
+        <thead>
+        <tr><th>Title</th><th>Location</th><th>Type</th><th>Status</th><th>Posted</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="job : ${jobs}">
+            <td th:text="${job.title}">Title</td>
+            <td th:text="${job.location}">Location</td>
+            <td th:text="${job.jobType}">Type</td>
+            <td>
+                <span class="badge"
+                      th:classappend="${job.status.name() == 'OPEN'} ? 'bg-success' : 'bg-secondary'"
+                      th:text="${job.status}">OPEN</span>
+            </td>
+            <td th:text="${#temporals.format(job.postedAt, 'dd MMM yyyy')}">Date</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

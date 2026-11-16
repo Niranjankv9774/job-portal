@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Job')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container" style="max-width: 720px;">
+    <h2 class="mb-3" th:text="${heading}">Post a job</h2>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <form th:action="@{${formAction}}" th:object="${jobForm}" method="post">
+        <div class="mb-3">
+            <label class="form-label" for="title">Job title</label>
+            <input class="form-control" id="title" th:field="*{title}">
+            <div class="text-danger small" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label" for="location">Location</label>
+                <input class="form-control" id="location" th:field="*{location}">
+                <div class="text-danger small" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label" for="jobType">Job type</label>
+                <select class="form-select" id="jobType" th:field="*{jobType}">
+                    <option value="">Choose...</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Internship">Internship</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Remote">Remote</option>
+                </select>
+                <div class="text-danger small" th:if="${#fields.hasErrors('jobType')}" th:errors="*{jobType}"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label" for="salaryMin">Minimum salary (optional)</label>
+                <input class="form-control" type="number" id="salaryMin" th:field="*{salaryMin}">
+                <div class="text-danger small" th:if="${#fields.hasErrors('salaryMin')}" th:errors="*{salaryMin}"></div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label" for="salaryMax">Maximum salary (optional)</label>
+                <input class="form-control" type="number" id="salaryMax" th:field="*{salaryMax}">
+                <div class="text-danger small" th:if="${#fields.hasErrors('salaryMax')}" th:errors="*{salaryMax}"></div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="description">Description</label>
+            <textarea class="form-control" id="description" rows="8" th:field="*{description}"></textarea>
+            <div class="text-danger small" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a class="btn btn-link" th:href="@{/recruiter/jobs}">Cancel</a>
+    </form>
+</div>
+</body>
+</html>
