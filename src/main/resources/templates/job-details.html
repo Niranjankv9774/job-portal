@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Job details')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <a th:href="@{/jobs}" class="small">&larr; Back to jobs</a>
+    <h2 class="mt-2" th:text="${job.title}">Title</h2>
+    <p class="text-muted" th:text="${job.company.name} + ' - ' + ${job.location}">Company - Location</p>
+    <p>
+        <span class="badge bg-secondary" th:text="${job.jobType}">Full-time</span>
+        <span class="badge bg-light text-dark"
+              th:text="${(job.salaryMin != null and job.salaryMax != null) ? (job.salaryMin + ' - ' + job.salaryMax) : 'Salary not disclosed'}">Salary</span>
+        <span class="badge bg-danger" th:if="${job.status.name() == 'CLOSED'}">Closed</span>
+    </p>
+
+    <h5>About the role</h5>
+    <p style="white-space: pre-line;" th:text="${job.description}">Description</p>
+
+    <h5 class="mt-4">About the company</h5>
+    <p th:text="${job.company.description != null ? job.company.description : 'No description provided.'}">About</p>
+
+    <!-- The "Apply" button is added on Day 9 -->
+</div>
+</body>
+</html>

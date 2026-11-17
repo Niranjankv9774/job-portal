@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Jobs')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <h2 class="mb-3">Browse jobs</h2>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <!-- Search form: a GET form puts the values in the address bar -->
+    <form class="row g-2 mb-4" th:action="@{/jobs}" method="get">
+        <div class="col-md-5">
+            <input class="form-control" name="keyword" th:value="${keyword}" placeholder="Job title or keyword">
+        </div>
+        <div class="col-md-4">
+            <input class="form-control" name="location" th:value="${location}" placeholder="Location">
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary w-100" type="submit">Search</button>
+        </div>
+    </form>
+
+    <p class="text-muted" th:text="${jobs.totalElements} + ' job(s) found'"></p>
+
+    <div th:if="${jobs.empty}" class="alert alert-secondary">No jobs match your search.</div>
+
+    <!-- One card per job on this page -->
+    <div class="card mb-3" th:each="job : ${jobs.content}">
+        <div class="card-body">
+            <h5 class="card-title mb-1">
+                <a th:href="@{/jobs/{id}(id=${job.id})}" th:text="${job.title}">Title</a>
+            </h5>
+            <h6 class="card-subtitle mb-2 text-muted"
+                th:text="${job.company.name} + ' - ' + ${job.location}">Company - Location</h6>
+            <span class="badge bg-secondary" th:text="${job.jobType}">Full-time</span>
+            <span class="badge bg-light text-dark"
+                  th:text="${(job.salaryMin != null and job.salaryMax != null) ? (job.salaryMin + ' - ' + job.salaryMax) : 'Salary not disclosed'}">Salary</span>
+            <span class="text-muted small ms-2"
+                  th:text="${#temporals.format(job.postedAt, 'dd MMM yyyy')}">Date</span>
+        </div>
+    </div>
+
+    <!-- Previous / Next buttons, only when there is more than one page -->
+    <nav th:if="${jobs.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${jobs.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/jobs(keyword=${keyword},location=${location},page=${jobs.number - 1})}">Previous</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" th:text="${jobs.number + 1} + ' / ' + ${jobs.totalPages}">1 / 1</span>
+            </li>
+            <li class="page-item" th:classappend="${jobs.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/jobs(keyword=${keyword},location=${location},page=${jobs.number + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
