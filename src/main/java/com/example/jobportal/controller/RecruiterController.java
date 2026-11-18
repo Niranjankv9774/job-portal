@@ -2,6 +2,7 @@ package com.example.jobportal.controller;
 
 import com.example.jobportal.dto.CompanyForm;
 import com.example.jobportal.dto.JobForm;
+import com.example.jobportal.entity.Job;
 import com.example.jobportal.entity.User;
 import com.example.jobportal.exception.BusinessException;
 import com.example.jobportal.service.JobService;
@@ -79,7 +80,6 @@ public class RecruiterController {
         try {
             jobService.createJob(userService.getByEmail(principal.getName()), form);
         } catch (BusinessException e) {
-            // no company yet: send them to create one, with the message
             redirect.addFlashAttribute("error", e.getMessage());
             return "redirect:/recruiter/company";
         }
@@ -87,7 +87,41 @@ public class RecruiterController {
         return "redirect:/recruiter/jobs";
     }
 
-    // The same job form page is reused for "new" and (Day 8) "edit"
+    // NEW: show the form filled with the job's current values
+    @GetMapping("/jobs/{id}/edit")
+    public String editJobForm(@PathVariable Long id, Principal principal, Model model) {
+        User user = userService.getByEmail(principal.getName());
+        Job job = jobService.getOwnedJob(id, user);          // ownership check
+        model.addAttribute("jobForm", JobForm.from(job));
+        addFormInfo(model, "Edit job", "/recruiter/jobs/" + id + "/edit");
+        return "recruiter/job-form";
+    }
+
+    // NEW: save the edits
+    @PostMapping("/jobs/{id}/edit")
+    public String updateJob(@PathVariable Long id,
+                            @Valid @ModelAttribute("jobForm") JobForm form,
+                            BindingResult result,
+                            Principal principal,
+                            Model model,
+                            RedirectAttributes redirect) {
+        if (result.hasErrors()) {
+            addFormInfo(model, "Edit job", "/recruiter/jobs/" + id + "/edit");
+            return "recruiter/job-form";
+        }
+        jobService.updateJob(id, userService.getByEmail(principal.getName()), form);
+        redirect.addFlashAttribute("success", "Job updated.");
+        return "redirect:/recruiter/jobs";
+    }
+
+    // NEW: close a job
+    @PostMapping("/jobs/{id}/close")
+    public String closeJob(@PathVariable Long id, Principal principal, RedirectAttributes redirect) {
+        jobService.closeJob(id, userService.getByEmail(principal.getName()));
+        redirect.addFlashAttribute("success", "Job closed.");
+        return "redirect:/recruiter/jobs";
+    }
+
     private void addFormInfo(Model model, String heading, String action) {
         model.addAttribute("heading", heading);
         model.addAttribute("formAction", action);
