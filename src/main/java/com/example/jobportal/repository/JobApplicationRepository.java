@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface JobApplicationRepository extends JpaRepository<JobApplication, Long> {
 
-    // "Has this seeker already applied to this job?"
     boolean existsByJobAndSeeker(Job job, User seeker);
 
-    // A seeker's applications, newest first
     List<JobApplication> findBySeekerOrderByAppliedAtDesc(User seeker);
+
+    // NEW: everyone who applied to one job, newest first
+    List<JobApplication> findByJobOrderByAppliedAtDesc(Job job);
 }

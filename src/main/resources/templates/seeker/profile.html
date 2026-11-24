@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('My profile')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container" style="max-width: 640px;">
+    <h2 class="mb-3">My profile</h2>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <!-- enctype="multipart/form-data" is REQUIRED for file uploads -->
+    <form th:action="@{/seeker/profile}" th:object="${profileForm}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label" for="phone">Phone</label>
+            <input class="form-control" id="phone" th:field="*{phone}">
+            <div class="text-danger small" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="skills">Skills (comma separated)</label>
+            <textarea class="form-control" id="skills" rows="3" th:field="*{skills}"></textarea>
+            <div class="text-danger small" th:if="${#fields.hasErrors('skills')}" th:errors="*{skills}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="experienceYears">Years of experience</label>
+            <input class="form-control" type="number" id="experienceYears" th:field="*{experienceYears}">
+            <div class="text-danger small" th:if="${#fields.hasErrors('experienceYears')}" th:errors="*{experienceYears}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="resume">Resume (PDF, max 2 MB)</label>
+            <input class="form-control" type="file" id="resume" name="resume" accept="application/pdf">
+            <div class="form-text" th:if="${hasResume}">A resume is already uploaded. Choose a new file to replace it.</div>
+        </div>
+        <button class="btn btn-primary" type="submit">Save profile</button>
+    </form>
+</div>
+</body>
+</html>

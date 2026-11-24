@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Applicants')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <a th:href="@{/recruiter/jobs}" class="small">&larr; Back to my jobs</a>
+    <h2 class="mt-2 mb-3">Applicants for <span th:text="${job.title}">Job</span></h2>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div th:if="${#lists.isEmpty(applications)}" class="alert alert-secondary">No one has applied yet.</div>
+
+    <table class="table align-middle" th:unless="${#lists.isEmpty(applications)}">
+        <thead>
+        <tr><th>Name</th><th>Email</th><th>Applied</th><th>Cover note</th><th>Resume</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${applications}">
+            <td th:text="${a.seeker.name}">Name</td>
+            <td th:text="${a.seeker.email}">Email</td>
+            <td th:text="${#temporals.format(a.appliedAt, 'dd MMM yyyy')}">Date</td>
+            <td style="max-width: 260px;" th:text="${a.coverNote != null ? a.coverNote : '-'}">Note</td>
+            <td>
+                <a th:if="${withResume.contains(a.id)}" class="btn btn-sm btn-outline-secondary"
+                   th:href="@{/recruiter/applications/{id}/resume(id=${a.id})}">Download</a>
+                <span th:unless="${withResume.contains(a.id)}" class="text-muted small">No resume</span>
+            </td>
+            <td>
+                <!-- A small form per row: pick a status and click Update -->
+                <form th:action="@{/recruiter/applications/{id}/status(id=${a.id})}" method="post" class="d-flex gap-2">
+                    <select name="status" class="form-select form-select-sm">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+                                th:selected="${s == a.status}"></option>
+                    </select>
+                    <button class="btn btn-sm btn-primary" type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
