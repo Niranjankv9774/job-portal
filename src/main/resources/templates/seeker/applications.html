@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('My applications')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <h2 class="mb-3">My applications</h2>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div th:if="${#lists.isEmpty(applications)}" class="alert alert-secondary">
+        You have not applied to any jobs yet. <a th:href="@{/jobs}">Browse jobs</a>.
+    </div>
+
+    <table class="table align-middle" th:unless="${#lists.isEmpty(applications)}">
+        <thead>
+        <tr><th>Job</th><th>Company</th><th>Applied</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${applications}">
+            <td><a th:href="@{/jobs/{id}(id=${a.job.id})}" th:text="${a.job.title}">Job</a></td>
+            <td th:text="${a.job.company.name}">Company</td>
+            <td th:text="${#temporals.format(a.appliedAt, 'dd MMM yyyy')}">Date</td>
+            <td>
+                <span class="badge"
+                      th:classappend="${a.status.name() == 'HIRED'} ? 'bg-success' : (${a.status.name() == 'REJECTED'} ? 'bg-danger' : (${a.status.name() == 'SHORTLISTED'} ? 'bg-primary' : 'bg-secondary'))"
+                      th:text="${a.status}">APPLIED</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

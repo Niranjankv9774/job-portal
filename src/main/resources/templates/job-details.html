@@ -23,7 +23,32 @@
     <h5 class="mt-4">About the company</h5>
     <p th:text="${job.company.description != null ? job.company.description : 'No description provided.'}">About</p>
 
-    <!-- The "Apply" button is added on Day 9 -->
+    <hr>
+
+    <!-- Apply area: only for open jobs -->
+    <div th:if="${job.status.name() == 'OPEN'}">
+
+        <!-- Already applied -->
+        <div th:if="${applied}" class="alert alert-info">You have already applied to this job.</div>
+
+        <!-- Logged-in seeker who has not applied yet -->
+        <form sec:authorize="hasRole('SEEKER')" th:unless="${applied}"
+              th:action="@{/jobs/{id}/apply(id=${job.id})}" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="coverNote">Cover note (optional)</label>
+                <textarea class="form-control" id="coverNote" name="coverNote" rows="3" maxlength="1000"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Apply now</button>
+        </form>
+
+        <!-- Nobody logged in -->
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-primary">Login to apply</a>
+    </div>
+
+    <!-- Closed job -->
+    <div th:if="${job.status.name() == 'CLOSED'}" class="alert alert-secondary">
+        This job is no longer accepting applications.
+    </div>
 </div>
 </body>
 </html>

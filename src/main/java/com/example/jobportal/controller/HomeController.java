@@ -1,8 +1,11 @@
 package com.example.jobportal.controller;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Controller
 public class HomeController {
@@ -12,14 +15,18 @@ public class HomeController {
         return "index";
     }
 
-    // After login: recruiters go to their jobs page. Seekers and admins get the
-    // temporary welcome page until we build their pages (Days 9 and 11).
+    // After login: send each role to its own page.
+    // Admins still get the temporary welcome page until Day 11.
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication) {
-        boolean recruiter = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_RECRUITER"));
-        if (recruiter) {
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+        if (roles.contains("ROLE_RECRUITER")) {
             return "redirect:/recruiter/jobs";
+        }
+        if (roles.contains("ROLE_SEEKER")) {
+            return "redirect:/seeker/applications";
         }
         return "dashboard";
     }
